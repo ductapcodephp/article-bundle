@@ -21,7 +21,6 @@ class ArticleDataTable extends BaseDataTable
     private $csrfTokenManager;
     private $defaultLocale;
     public function __construct(ArticleRepository $repository,
-        EntityManagerInterface $em,
         TranslatableListener $translatableListener,
         ParameterBagInterface $parameterBag,
         CsrfTokenManagerInterface $csrfTokenManager)

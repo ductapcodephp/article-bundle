@@ -2,6 +2,7 @@
 
 namespace AmzsCMS\ArticleBundle\Repository;
 
+use AmzsCMS\ArticleBundle\Entity\SocialSharing;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 

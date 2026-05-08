@@ -10,16 +10,16 @@ use AmzsCMS\ArticleBundle\Traits\DoctrineIdentifierTrait;
 use AmzsCMS\ArticleBundle\Traits\DoctrineThumbnailTrait;
 use AmzsCMS\ArticleBundle\Traits\DoctrineTitleSubtitleTrait;
 use AmzsCMS\CoreBundle\Traits\Doctrine\Timestampable;
+use AmzsCMS\PageBundle\Entity\Page;
 use AmzsCMS\TopicBundle\Entity\Topic;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
-use Doctrine\Common\Collections\Criteria;
+use AmzsCMS\ArticleBundle\DataType\ArticleStatusType;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
-use AmzsCMS\ArticleBundle\DataType\ArticleStatusType;
+
 /**
  * @ORM\Entity(repositoryClass="AmzsCMS\ArticleBundle\Repository\PostRepository")
- * @ORM\Table(name="core_post")
+ * @ORM\Table(name="amzs_post")
  * @ORM\HasLifecycleCallbacks
  */
 class Post
@@ -36,12 +36,12 @@ class Post
      * @ORM\OneToOne(targetEntity="AmzsCMS\ArticleBundle\Entity\SocialSharing", mappedBy="post", cascade={"persist", "remove"})
      */
     private $socialSharing;
-//
-//    /**
-//     * @ORM\OneToOne(targetEntity="AmzsCMS\ArticleBundle\Entity\Page", mappedBy="post",cascade={"persist"}  )
-//     */
-//    private $page;
-//
+
+    /**
+     * @ORM\OneToOne(targetEntity="AmzsCMS\PageBundle\Entity\Page", mappedBy="post",cascade={"persist"}  )
+     */
+    private $page;
+
 //    /**
 //     * @ORM\ManyToOne (targetEntity="AmzsCMS\ArticleBundle\Entity\Category", inversedBy="posts" )
 //     * @ORM\JoinColumn(name="category_id", referencedColumnName="id",nullable=true)
@@ -109,7 +109,7 @@ class Post
     /**
      * @ORM\ManyToMany(targetEntity="AmzsCMS\TopicBundle\Entity\Topic", inversedBy="posts", cascade={"persist"})
      * @ORM\JoinTable(
-     *     name="core_post_topic",
+     *     name="amzs_post_topic",
      *     joinColumns={@ORM\JoinColumn(name="post_id", referencedColumnName="id")},
      *     inverseJoinColumns={@ORM\JoinColumn(name="topic_id", referencedColumnName="id")}
      * )
@@ -314,28 +314,28 @@ class Post
         return $this;
     }
 
-//    public function getPage(): ?Page
-//    {
-//        return $this->page;
-//    }
-//
-//    public function setPage(?Page $page)
-//    {
-//        // unset the owning side of the relation if necessary
-//        if ($page === null && $this->page !== null) {
-//            $this->page->setPost(null);
-//        }
-//
-//        // set the owning side of the relation if necessary
-//        if ($page !== null && $page->getPost() !== $this) {
-//            $page->setPost($this);
-//        }
-//
-//        $this->page = $page;
-//
-//        return $this;
-//    }
-//
+    public function getPage(): ?Page
+    {
+        return $this->page;
+    }
+
+    public function setPage(?Page $page)
+    {
+        // unset the owning side of the relation if necessary
+        if ($page === null && $this->page !== null) {
+            $this->page->setPost(null);
+        }
+
+        // set the owning side of the relation if necessary
+        if ($page !== null && $page->getPost() !== $this) {
+            $page->setPost($this);
+        }
+
+        $this->page = $page;
+
+        return $this;
+    }
+
 //    public function getCategory(): ?Category
 //    {
 //        return $this->category;
@@ -392,10 +392,7 @@ class Post
 //        return $this;
 //    }
 
-    /**
-     * @return Collection<int, Topic>
-     */
-    public function getTopics(): Collection
+    public function getTopics(): ArrayCollection
     {
         return $this->topics;
     }

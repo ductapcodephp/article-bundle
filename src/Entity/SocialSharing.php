@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass="AmzsCMS\ArticleBundle\Repository\SocialSharingRepository")
- * @ORM\Table(name="core_social_sharing")
+ * @ORM\Table(name="amzs_social_sharing")
  * @ORM\HasLifecycleCallbacks
  */
 class SocialSharing
