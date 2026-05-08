@@ -1,0 +1,17 @@
+services:
+  _defaults:
+    autowire: true      # Automatically injects dependencies in your services.
+    autoconfigure: true
+
+  AmzsCMS\ArticleBundle\:
+    resource: '../../../src/'
+    exclude:
+      - '../../DependencyInjection/'
+      - '../../Kernel.php'
+      - '../../Traits/'
+      - '../../DataType'
+      - '../../AmzsArticleBundle.php'
+
+  AmzsCMS\ArticleBundle\Routing\AmzsArticleLoader:
+    tags: [ routing.loader ]
+

@@ -1,0 +1,93 @@
+{% if form.post.socialSharing is defined %}
+    {% import '@AmzsArticle/article/partials/macros.html.twig' as macros %}
+    <!--begin::SocialSharing-->
+    <div class="card card-flush py-4"  data-controller="social-sharing"
+         data-social-sharing-{{ page is defined ? "Admin--page-add" : "Admin--article-add" }}-outlet="#{{ page is defined ? 'amz_post_add' : "article-form" }}">
+        <!--begin::Card header-->
+        <div class="card-header">
+            <div class="card-title">
+                <h2>Social Sharing</h2>
+            </div>
+        </div>
+        <!--end::Card header-->
+        <!--begin::Card body-->
+        <div class="card-body pt-0">
+            <!--begin::Input group-->
+            <div class="row mb-10">
+                <div class="col-12 col-md-6">
+                    <!--begin::Label-->
+                    <label class="form-label">Google title</label>
+                    <button type="button" class="btn btn-icon btn-sm btn-light h-30px w-30px"  data-action='click->social-sharing#copyGoogleTitle:prevent'>
+                        {{ macros.icon_copy() }}
+                    </button>
+                    <!--end::Label-->
+                    <!--begin::Input-->
+                    {{ form_widget(form.post.socialSharing.googleTitle, {'attr': {'class': 'form-control fs-7','placeholder': 'Enter google title','data-social-sharing-target': 'googleTitle'}}) }}
+                    <!--end::Input-->
+                </div>
+                <div class="col-12 col-md-6">
+                    <!--begin::Label-->
+                    <label class="form-label">Google tags</label>
+                    <!--end::Label-->
+                    <!--begin::Input-->
+                    {{ form_widget(form.post.socialSharing.googleTagStr, {attr: {'class': 'form-control fs-7 js-tagify'}}) }}
+                    <!--end::Input-->
+                </div>
+            </div>
+            <div class="mb-10">
+                <!--begin::Label-->
+                <label class="form-label">Google Description</label>
+                <!--end::Label-->
+                <button type="button" class="btn btn-icon btn-sm btn-light h-30px w-30px" data-action='click->social-sharing#copyGoogleDes:prevent'>
+                    {{ macros.icon_copy() }}
+                </button>
+                <!--begin::Input-->
+                {{ form_widget(form.post.socialSharing.googleDescription, {'attr': {'class': 'form-control fs-7', 'data-social-sharing-target': 'googleDescription'}}) }}
+                <!--end::Input-->
+            </div>
+            <div class="mb-10">
+                <!--begin::Label-->
+                <label class="form-label">Facebook title</label>
+                <!--end::Label-->
+                <button type="button" class="btn btn-icon btn-sm btn-light h-30px w-30px"  data-action='click->social-sharing#copyFacebookTitle:prevent'>
+                    {{ macros.icon_copy() }}
+                </button>
+                <!--begin::Input-->
+                {{ form_widget(form.post.socialSharing.facebookTitle, {'attr': {'class': 'form-control fs-7','placeholder': 'Enter facebook title','data-social-sharing-target': 'facebookTitle'}}) }}
+                <!--end::Input-->
+            </div>
+
+            <div class="mb-10">
+                <!--begin::Label-->
+                <label class="form-label">Facebook Thumbnail</label>
+                <!--end::Label-->
+                <div class="flex-column d-flex gap-3" data-controller="core-gallery"
+                     data-action="Admin--picture-global:socialSharingFacebookThumbnail@window->core-gallery#listenPickedPicture">
+                    <div class="d-flex gap-2">
+{#                        <a href="{{ path(app_admin_media_library_index_modal_route, {'event': 'socialSharingFacebookThumbnail'}) }}" data-amz-btn-open-modal#}
+{#                           class="btn btn-sm fw-bold btn-primary">Pick</a>#}
+                    </div>
+                    <div data-core-gallery-target="areaReview">
+                        <img src="{% if form.post.socialSharing.facebookThumbnail.vars.value is not empty %}
+                                {{ asset(form.post.socialSharing.facebookThumbnail.vars.value) }}{% endif %}"
+                             alt="review" class="mw-275px img-thumbnail" data-core-gallery-target="review">
+                    </div>
+                    {{ form_widget(form.post.socialSharing.facebookThumbnail,  {attr: {'data-core-gallery-target': "input"}}) }}
+                </div>
+            </div>
+            <div class="mb-10">
+                <!--begin::Label-->
+                <label class="form-label">Facebook Description</label>
+                <button type="button" class="btn btn-icon btn-sm btn-light h-30px w-30px" data-action='click->social-sharing#copyFacebookDes:prevent'>
+                    {{ macros.icon_copy() }}
+                </button>
+                <!--end::Label-->
+                <!--begin::Input-->
+                {{ form_widget(form.post.socialSharing.facebookDescription, {'attr': {'class': 'form-control fs-7', 'data-social-sharing-target': 'facebookDescription'}}) }}
+                <!--end::Input-->
+            </div>
+        </div>
+        <!--end::Card header-->
+    </div>
+    <!--end::SocialSharing-->
+{% endif %}

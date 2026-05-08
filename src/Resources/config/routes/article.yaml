@@ -1,0 +1,28 @@
+amzs_article_index_route:
+  path: /
+  controller: AmzsCMS\ArticleBundle\Controller\ArticleController::index
+  methods: [GET]
+
+amzs_article_data_route:
+  path: /data
+  controller: AmzsCMS\ArticleBundle\Controller\ArticleController::data
+  methods: [GET, POST]
+
+amzs_article_add_route:
+  path: /add
+  controller: AmzsCMS\ArticleBundle\Controller\ArticleController::add
+  methods: [GET, POST]
+
+amzs_article_edit_route:
+  path: /edit/{id}
+  controller: AmzsCMS\ArticleBundle\Controller\ArticleController::edit
+  methods: [GET, POST]
+  requirements:
+    id: '[1-9]\d*|__ID__'
+
+amzs_article_delete_route:
+  path: /delete/{id}
+  controller: AmzsCMS\ArticleBundle\Controller\ArticleController::delete
+  methods: [POST]
+  requirements:
+    id: '[1-9]\d*|__ID__'

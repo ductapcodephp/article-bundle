@@ -1,0 +1,3 @@
+amzs_admin_article_bundle:
+  resource: "@AmzsArticleBundle/Resources/config/routes/article.yaml"
+  prefix:   /article

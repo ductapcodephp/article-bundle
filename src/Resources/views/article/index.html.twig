@@ -1,0 +1,111 @@
+{% extends '@AmzsCore/base.html.twig' %}
+
+{% block title %}CMS-Article Management{% endblock %}
+
+{% block toolbar %}
+    {% embed '@AmzsCore/Layout/_toolbar.html.twig' %}
+
+        {% block toolbar_title %}
+            Article Management
+        {% endblock %}
+
+        {% block toolbar_breadcrumbs %}
+            <li class="breadcrumb-item text-muted">
+                <a href="#" class="text-muted text-hover-primary">Article</a>
+            </li>
+        {% endblock %}
+
+        {% block toolbar_button_actions %}
+            <a href="{{ path(amzs_article_add_route) }}" class="btn btn-sm fw-bold btn-primary">Create</a>
+        {% endblock %}
+
+    {% endembed %}
+{% endblock %}
+
+{% block body %}
+
+    <div class="mb-3">
+        <select id="kt_amz_language_select" class="form-select form-select-sm w-150px">
+            {% for locale in locales %}
+                <option value="{{ locale }}">{{ locale }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    {% embed '@AmzsCore/Components/Table/base.html.twig' with { show_language_filter: true } %}
+    {% endembed %}
+
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+
+    <script>
+        "use strict";
+        const $langSelect = $('#kt_amz_language_select');
+        $(function () {
+            KTModalForm.init();
+
+            KTAmzDataTable.init({
+                ajaxUrl: "{{ path(amzs_article_data_route) }}",
+                columns: [
+                    // cột Actions
+                    {
+                        data: null,
+                        title: 'Actions',
+                        orderable: false,
+                        render: function (data, type, row) {
+                            const editUrl   = "{{ path(amzs_article_edit_route, {'id': '__ID__'}) }}".replace('__ID__', row.id);
+                            const deleteUrl = "{{ path(amzs_article_delete_route, {'id': '__ID__', '_csrf_token': '__CSRF_TOKEN__'}) }}"
+                                .replace('__ID__', row.id).replace('__CSRF_TOKEN__', row._csrf_token);
+                            return `
+                                <a href="${editUrl}"  class="btn btn-icon btn-active-light-primary w-30px h-30px me-2">
+                                    <span data-bs-toggle="tooltip" title="Edit">
+                                        {{ icon('edit') }}
+                                    </span>
+                                </a>
+
+                             <a href="${deleteUrl}" data-amz-btn-remove class="btn btn-icon btn-active-light-primary w-30px h-30px">
+                                        <span data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-original-title="Delete">
+                                            {{ icon('delete') }}
+                                        </span>
+                                </a>
+                            `;
+                        }
+                    },
+                    { data: 'index', title: 'ID', width: '50px' },
+                    {
+                        data: 'thumbnail',
+                        title: 'Thumbnail',
+                        width: 'w-100px',
+                        render: function (data, type, row) {
+                            return `<img src="${data}" class="img-thumbnail w-100px" alt="${row.title}">`;
+                        }
+                    },
+                    { data: 'article_title',       title: 'Title' },
+                    {
+                        data: 'hot',
+                        title: 'Hot',
+                        render: function (data, type, row) {
+                            return `<span class="badge badge-primary fs-7">${data}</span>`;
+                        }
+                    },
+                    {
+                        data: 'new',
+                        title: 'New',
+                        render: function (data, type, row) {
+                            return `<span class="badge badge-primary fs-7">${data}</span>`;
+                        }
+                    },
+                    {
+                        data: 'language',
+                        title: 'Language',
+                        render: function (data, type, row) {
+                            return `<span class="badge badge-primary fs-7">${data}</span>`;
+                        }
+                    },
+                    { data: 'created_at', title: 'Created At' },
+                    { data: 'updated_at', title: 'Updated At' },
+                ]
+            });
+        });
+    </script>
+{% endblock %}
