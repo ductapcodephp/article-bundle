@@ -1,6 +1,6 @@
 "use strict";
 
-document.addEventListener('DOMContentLoaded', function () {[[]]
+document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('.js-tagify').forEach(function (el) {
         var initialValue = el.value;
         var tagify = new Tagify(el, {
