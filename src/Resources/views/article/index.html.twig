@@ -96,10 +96,18 @@
                         }
                     },
                     {
-                        data: 'language',
+                        data: null,
                         title: 'Language',
-                        render: function (data, type, row) {
-                            return `<span class="badge badge-primary fs-7">${data}</span>`;
+
+                        render: function () {
+
+                            const lang = $langSelect.val();
+
+                            return `
+                            <span class="badge badge-primary fs-7">
+                                ${lang}
+                            </span>
+                        `;
                         }
                     },
                     { data: 'created_at', title: 'Created At' },
