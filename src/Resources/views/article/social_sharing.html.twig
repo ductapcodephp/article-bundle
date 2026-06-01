@@ -61,18 +61,18 @@
                 <!--begin::Label-->
                 <label class="form-label">Facebook Thumbnail</label>
                 <!--end::Label-->
-                <div class="flex-column d-flex gap-3" data-controller="core-gallery"
-                     data-action="Admin--picture-global:socialSharingFacebookThumbnail@window->core-gallery#listenPickedPicture">
+                <div class="flex-column d-flex gap-3" data-gallery-target>
+
                     <div class="d-flex gap-2">
-{#                        <a href="{{ path(app_admin_media_library_index_modal_route, {'event': 'socialSharingFacebookThumbnail'}) }}" data-amz-btn-open-modal#}
-{#                           class="btn btn-sm fw-bold btn-primary">Pick</a>#}
+                        <a href="javascript:void(0)" data-amzs-gallery-modal
+                           class="btn btn-sm fw-bold btn-primary">Pick</a>
                     </div>
-                    <div data-core-gallery-target="areaReview">
+                    <div >
                         <img src="{% if form.post.socialSharing.facebookThumbnail.vars.value is not empty %}
                                 {{ asset(form.post.socialSharing.facebookThumbnail.vars.value) }}{% endif %}"
-                             alt="review" class="mw-275px img-thumbnail" data-core-gallery-target="review">
+                             alt="review" class="mw-275px img-thumbnail">
                     </div>
-                    {{ form_widget(form.post.socialSharing.facebookThumbnail,  {attr: {'data-core-gallery-target': "input"}}) }}
+                    {{ form_widget(form.post.socialSharing.facebookThumbnail) }}
                 </div>
             </div>
             <div class="mb-10">

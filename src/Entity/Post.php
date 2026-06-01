@@ -12,8 +12,9 @@ use AmzsCMS\ArticleBundle\Traits\DoctrineTitleSubtitleTrait;
 use AmzsCMS\CoreBundle\Traits\Doctrine\Timestampable;
 use AmzsCMS\PageBundle\Entity\Page;
 use AmzsCMS\TopicBundle\Entity\Topic;
-use Doctrine\Common\Collections\ArrayCollection;
 use AmzsCMS\ArticleBundle\DataType\ArticleStatusType;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 
@@ -43,7 +44,7 @@ class Post
     private $page;
 
 //    /**
-//     * @ORM\ManyToOne (targetEntity="AmzsCMS\ArticleBundle\Entity\Category", inversedBy="posts" )
+//     * @ORM\ManyToOne (targetEntity="AmzsCMS\CategoryBundle\Entity\Category", inversedBy="posts" )
 //     * @ORM\JoinColumn(name="category_id", referencedColumnName="id",nullable=true)
 //     */
 //    private $category;
@@ -127,7 +128,6 @@ class Post
     public function __construct()
     {
         $this->blocks = new ArrayCollection();
-        $this->topics = new ArrayCollection();
     }
 
     public function getUrl()
@@ -392,12 +392,12 @@ class Post
 //        return $this;
 //    }
 
-    public function getTopics(): ArrayCollection
+    public function getTopics(): Collection
     {
         return $this->topics;
     }
 
-    public function addTopic(Topic $topic)
+    public function addTopic(Topic $topic): Post
     {
         if (!$this->topics->contains($topic)) {
             $this->topics->add($topic);
@@ -406,7 +406,7 @@ class Post
         return $this;
     }
 
-    public function removeTopic(Topic $topic)
+    public function removeTopic(Topic $topic): Post
     {
         $this->topics->removeElement($topic);
 

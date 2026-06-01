@@ -27,29 +27,34 @@
     }}) }}
     {% do form.post.setRendered %}
     <div class="d-flex flex-column gap-7 gap-lg-10 w-100 w-lg-300px mb-7 me-lg-10">
-        <div class="card card-flush py-4" data-controller="core-gallery"
-             data-action="Admin--picture-global:listenPickedPicture@window->core-gallery#listenPickedPicture">
+        <div class="card card-flush py-4" data-gallery-target>
             <div class="card-header">
                 <div class="card-title" >
                     <h2>Thumbnail</h2>
                 </div>
                 <div class="card-toolbar">
-                    {#                    <a href="{{ path(app_admin_media_library_index_modal_route, {'event': 'listenPickedPicture'}) }}" class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"#}
-                    {#                       data-amz-btn-open-modal#}
-                    {#                       data-bs-toggle="tooltip" title="Open Gallery">#}
-                    {#                        <i class="ki-duotone ki-pencil fs-7">#}
-                    {#                            <span class="path1"></span>#}
-                    {#                            <span class="path2"></span>#}
-                    {#                        </i>#}
-                    {#                    </a>#}
+
+                    <a
+                            href="javascript:void(0)"
+                            class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
+                            data-amzs-gallery-modal
+                            data-bs-toggle="tooltip"
+                            title="Open Gallery"
+                    >
+                        <i class="ki-duotone ki-pencil fs-7">
+                            <span class="path1"></span>
+                            <span class="path2"></span>
+                        </i>
+                    </a>
+
                 </div>
             </div>
             <div class="card-body text-center pt-0">
-                <div data-core-gallery-target="review"
+                <div
                      class="image-input image-input-empty image-input-outline image-input-placeholder mb-3"
                      style="background-image: url('{{ asset(article is not null and article.post.thumbnail is not null ? article.post.thumbnail : 'themes/media/svg/files/blank-image.svg') }}');">
                     <div class="image-input-wrapper"></div>
-                    {{ form_widget(form.post.thumbnail, {attr: {hidden: true, 'data-core-gallery-target': 'input'}}) }}
+                    {{ form_widget(form.post.thumbnail, {attr: {hidden: true}}) }}
                     <span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="cancel" data-bs-toggle="tooltip" title="Cancel">
                             <i class="ki-duotone ki-cross fs-2">
                                 <span class="path1"></span>
@@ -265,5 +270,4 @@
         });
     </script>
     <script src="{{ asset(get_path_article_cms_asset() ~ 'assets/js/article.js') }}"></script>
-    <script src="{{ asset('') }}"></script>
 {% endblock %}
