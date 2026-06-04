@@ -68,7 +68,8 @@ document.addEventListener('DOMContentLoaded', function () {
             const route = this.dataset.route;
             if (window.KTCKEditor4 && typeof KTCKEditor4.updateAll === 'function') {
                 KTCKEditor4.updateAll();
-            } else if (window.CKEDITOR && CKEDITOR.instances) {
+            }
+            else if (window.CKEDITOR && CKEDITOR.instances) {
                 Object.keys(CKEDITOR.instances).forEach(function (id) {
                     if (CKEDITOR.instances[id]) {
                         CKEDITOR.instances[id].updateElement();
