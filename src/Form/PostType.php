@@ -75,6 +75,7 @@ class PostType extends AbstractType
                 'attr'     => [
                     'data-locale'       => $locale,
                     'data-amz-ckeditor' => 'true',
+
                 ],
             ]);
         }
