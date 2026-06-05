@@ -2,14 +2,13 @@
 
 namespace AmzsCMS\ArticleBundle\Entity;
 
-
 use AmzsCMS\ArticleBundle\Traits\DoctrineIdentifierTrait;
 use AmzsCMS\CoreBundle\Traits\Doctrine\Timestampable;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass="AmzsCMS\ArticleBundle\Repository\SocialSharingRepository")
- * @ORM\Table(name="amzs_social_sharing")
+ * @ORM\Table(name="amzs_social_sharing_article")
  * @ORM\HasLifecycleCallbacks
  */
 class SocialSharing
@@ -22,10 +21,11 @@ class SocialSharing
     private $googleTitle;
 
     /**
-     * @ORM\OneToOne(targetEntity="AmzsCMS\ArticleBundle\Entity\Post", inversedBy="socialSharing")
-     * @ORM\JoinColumn(name="post_id", referencedColumnName="id",nullable=true)
+     * Đổi liên kết từ Post sang Article.
+     * @ORM\OneToOne(targetEntity="AmzsCMS\ArticleBundle\Entity\Article", inversedBy="socialSharing")
+     * @ORM\JoinColumn(name="article_id", referencedColumnName="id", nullable=true)
      */
-    private $post;
+    private $article;
 
     /**
      * @ORM\Column(type="text", nullable=true)
@@ -88,13 +88,13 @@ class SocialSharing
 
     public function getGoogleTagStr(): string
     {
-        if(is_null($this->googleTag)) return '';
+        if (is_null($this->googleTag)) return '';
         return implode(',', $this->googleTag);
     }
 
     public function setGoogleTag(?string $googleTag): self
     {
-        if(is_null($googleTag)) return $this;
+        if (is_null($googleTag)) return $this;
         $this->googleTag = array_column(json_decode($googleTag, true), 'value');
 
         return $this;
@@ -102,7 +102,7 @@ class SocialSharing
 
     public function setGoogleTagStr(?string $googleTag): self
     {
-        if(is_null($googleTag)) return $this;
+        if (is_null($googleTag)) return $this;
         $this->googleTag = array_column(json_decode($googleTag, true), 'value');
 
         return $this;
@@ -144,18 +144,15 @@ class SocialSharing
         return $this;
     }
 
-
-
-    public function getPost(): ?Post
+    public function getArticle(): ?Article
     {
-        return $this->post;
+        return $this->article;
     }
 
-    public function setPost(?Post $post): self
+    public function setArticle(?Article $article): self
     {
-        $this->post = $post;
+        $this->article = $article;
 
         return $this;
     }
-
 }

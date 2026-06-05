@@ -2,7 +2,7 @@
 
 namespace AmzsCMS\ArticleBundle\DataType;
 
-class ArticleStatusType
+class PostStatusType
 {
     /** STATUS IS_HOT */
     const HOT_TYPE_NORMAL = 1;

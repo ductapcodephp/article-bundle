@@ -7,7 +7,6 @@ namespace AmzsCMS\ArticleBundle\Controller;
 use AmzsCMS\ArticleBundle\Constant\ArticleRoute;
 use AmzsCMS\ArticleBundle\DataTable\ArticleDataTable;
 use AmzsCMS\ArticleBundle\Entity\Article;
-use AmzsCMS\ArticleBundle\Entity\Post;
 use AmzsCMS\ArticleBundle\Entity\SocialSharing;
 use AmzsCMS\ArticleBundle\Form\AddArticleForm;
 use AmzsCMS\ArticleBundle\Services\ArticleService;
@@ -38,44 +37,43 @@ class ArticleController extends AbstractController
         $this->locales        = $langConfig['locales'] ?? ['vi'];
     }
 
-    private function loadTranslations(Post $post): array
+    private function loadTranslations(Article $article): array
     {
         $translationRepo = $this->entityManager->getRepository(Translation::class);
-        $allTranslations = $translationRepo->findTranslations($post);
+        $allTranslations = $translationRepo->findTranslations($article);
 
         $translations = [];
         foreach ($this->locales as $locale) {
             $translations[$locale] = [
-                'title'       => $allTranslations[$locale]['title'] ?? $post->getTitle(),
-                'description' => $allTranslations[$locale]['description'] ?? $post->getDescription(),
-                'content'     => $allTranslations[$locale]['content'] ?? $post->getContent(),
+                'title'       => $allTranslations[$locale]['title'] ?? $article->getTitle(),
+                'description' => $allTranslations[$locale]['description'] ?? $article->getDescription(),
+                'content'     => $allTranslations[$locale]['content'] ?? $article->getContent(),
             ];
         }
 
         return $translations;
     }
-
-    private function saveTranslations(Post $post, $postForm): void
+    private function saveTranslations(Article $article, $form): void
     {
         $slugify     = new Slugify();
         $firstLocale = true;
 
         foreach ($this->locales as $locale) {
-            $title       = $postForm->get("title_{$locale}")->getData();
-            $description = $postForm->get("description_{$locale}")->getData();
-            $content     = $postForm->get("content_{$locale}")->getData();
+            $title       = $form->get("title_{$locale}")->getData();
+            $description = $form->get("description_{$locale}")->getData();
+            $content     = $form->get("content_{$locale}")->getData();
 
-            $post->setLocale($locale);
-            $post->setTitle($title ?? '');
-            $post->setDescription($description);
-            $post->setContent($content);
+            $article->setLocale($locale);
+            $article->setTitle($title ?? '');
+            $article->setDescription($description);
+            $article->setContent($content);
 
-            if ($firstLocale && empty($post->getSlug())) {
-                $post->setSlug($slugify->slugify($title ?? ''));
+            if ($firstLocale && empty($article->getSlug())) {
+                $article->setSlug($slugify->slugify($title ?? ''));
                 $firstLocale = false;
             }
 
-            $this->entityManager->persist($post);
+            $this->entityManager->persist($article);
             $this->entityManager->flush();
         }
     }
@@ -90,13 +88,10 @@ class ArticleController extends AbstractController
     public function add(Request $request): Response
     {
         $article = new Article();
-        $post    = new Post();
-        $article->setPost($post);
-        $post->setArticle($article);
 
         $socialSharing = new SocialSharing();
-        $socialSharing->setPost($post);
-        $post->setSocialSharing($socialSharing);
+        $socialSharing->setArticle($article);
+        $article->setSocialSharing($socialSharing);
 
         $translations = [];
         foreach ($this->locales as $locale) {
@@ -120,7 +115,7 @@ class ArticleController extends AbstractController
                 $this->entityManager->persist($article);
                 $this->entityManager->flush();
 
-                $this->saveTranslations($post, $form->get('post'));
+                $this->saveTranslations($article, $form);
 
                 return new JsonResponse([
                     'message'  => 'Article added successfully!',
@@ -150,21 +145,18 @@ class ArticleController extends AbstractController
     {
         $article = $this->articleService->find($id);
 
-        if (!$article->getPost()) {
-            $post = new Post();
-            $article->setPost($post);
-            $post->setArticle($article);
+        if (!$article) {
+            throw $this->createNotFoundException('Article not found');
         }
 
-        $post = $article->getPost();
-
-        if ($post->getSocialSharing() === null) {
+        if ($article->getSocialSharing() === null) {
             $socialSharing = new SocialSharing();
-            $socialSharing->setPost($post);
-            $post->setSocialSharing($socialSharing);
+            $socialSharing->setArticle($article);
+            $article->setSocialSharing($socialSharing);
         }
 
-        $translations = $this->loadTranslations($post);
+        $translations = $this->loadTranslations($article);
+
         $form = $this->createForm(AddArticleForm::class, $article, [
             'locales'      => $this->locales,
             'translations' => $translations,
@@ -175,12 +167,12 @@ class ArticleController extends AbstractController
         if ($form->isSubmitted()) {
             if ($form->isValid()) {
                 $keepSlug    = $request->request->get('keepSlug');
-                $currentSlug = $post->getSlug();
+                $currentSlug = $article->getSlug();
 
-                $this->saveTranslations($post, $form->get('post'));
+                $this->saveTranslations($article, $form);
 
                 if (!empty($keepSlug)) {
-                    $post->setSlug($currentSlug);
+                    $article->setSlug($currentSlug);
                     $this->entityManager->flush();
                 }
 

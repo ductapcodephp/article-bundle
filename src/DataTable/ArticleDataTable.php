@@ -2,11 +2,10 @@
 
 namespace AmzsCMS\ArticleBundle\DataTable;
 
-use AmzsCMS\ArticleBundle\DataType\ArticleStatusType;
+use AmzsCMS\ArticleBundle\DataType\PostStatusType;
 use AmzsCMS\ArticleBundle\Entity\Article;
 use AmzsCMS\ArticleBundle\Repository\ArticleRepository;
 use AmzsCMS\CoreBundle\Service\Datatable\BaseDataTable;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Gedmo\Translatable\TranslatableListener;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -16,43 +15,42 @@ use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 class ArticleDataTable extends BaseDataTable
 {
     protected $entityAlias = 'article';
-    private  $translatableListener;
-    private  $parameterBag;
+    private $translatableListener;
+    private $parameterBag;
     private $csrfTokenManager;
     private $defaultLocale;
-    public function __construct(ArticleRepository $repository,
+
+    public function __construct(
+        ArticleRepository $repository,
         TranslatableListener $translatableListener,
         ParameterBagInterface $parameterBag,
-        CsrfTokenManagerInterface $csrfTokenManager)
-    {
+        CsrfTokenManagerInterface $csrfTokenManager
+    ) {
         $this->translatableListener = $translatableListener;
         $this->parameterBag = $parameterBag;
-        $this->defaultLocale = $parameterBag->get('language')['default'];
+        $this->defaultLocale = $parameterBag->get('language')['default'] ?? 'vi';
         $this->csrfTokenManager = $csrfTokenManager;
         parent::__construct($repository);
     }
 
-    // ================== Tùy chỉnh QueryBuilder ==================
     protected function createBaseQueryBuilder(): QueryBuilder
     {
-        return $this->repository->createQueryBuilder($this->entityAlias)
-            ->join($this->entityAlias . '.post', 'post')
-            ->andWhere('post.deletedAt IS NULL');
+        return $this->repository->createQueryBuilder($this->entityAlias);
     }
+
     protected function applyDefaultFilters(QueryBuilder $qb, Request $request): void
     {
     }
+
     protected function applyCustomFilters(QueryBuilder $qb, Request $request): void
     {
         $locale = $request->query->get('language');
 
         if (empty($locale)) {
-            return;
+            $locale = $this->defaultLocale;
         }
         $this->translatableListener->setTranslatableLocale($locale);
-        if ($locale === $this->defaultLocale) {
-            return;
-        }
+
     }
 
     protected function getColumnMap(): array
@@ -64,7 +62,7 @@ class ArticleDataTable extends BaseDataTable
 
     protected function getSearchableFields(): array
     {
-        return ['name'];
+        return ['title'];
     }
 
     protected function formatData(array $entities): array
@@ -75,13 +73,13 @@ class ArticleDataTable extends BaseDataTable
             $data[] = [
                 'index'         => $index + 1,
                 'id'            => $article->getId(),
-                'article_title' => $article->getPost()->getTitle(),
-                'thumbnail'     => $article->getPost()->getThumbnail(),
-                'hot'           => ArticleStatusType::getNameHotType($article->getPost()->getIsHot()),
-                'new'           => ArticleStatusType::getNameNewType($article->getPost()->getIsNew()),
-                'created_at'    => $article->getCreatedAt()->format('Y-m-d H:i:s'),
-                'updated_at'    => $article->getUpdatedAt()->format('Y-m-d H:i:s'),
-                '_csrf_token' => $this->csrfTokenManager->getToken('delete-article-'.$article->getId())->getValue(),
+                'article_title' => $article->getTitle(),
+                'thumbnail'     => $article->getThumbnail(),
+                'hot'           => PostStatusType::getNameHotType((int)$article->getIsHot()),
+                'new'           => PostStatusType::getNameNewType((int)$article->getIsNew()),
+                'created_at'    => $article->getCreatedAt() ? $article->getCreatedAt()->format('Y-m-d H:i:s') : null,
+                'updated_at'    => $article->getUpdatedAt() ? $article->getUpdatedAt()->format('Y-m-d H:i:s') : null,
+                '_csrf_token'   => $this->csrfTokenManager->getToken('delete-article-' . $article->getId())->getValue(),
             ];
         }
         return $data;

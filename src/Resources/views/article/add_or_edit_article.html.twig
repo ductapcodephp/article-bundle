@@ -1,9 +1,9 @@
 {% extends '@AmzsCore/base.html.twig' %}
-{% block title %}CMS- {% if article is null %}Add{% else %}Edit{% endif %} News Article{% endblock %}
+{% block title %}CMS- {% if article.id is null %}Add{% else %}Edit{% endif %} News Article{% endblock %}
 
 {% block toolbar %}
     {% embed '@AmzsCore/Layout/_toolbar.html.twig' %}
-        {% block toolbar_title %}{% if article is null %}Add{% else %}Edit{% endif %}{% endblock toolbar_title %}
+        {% block toolbar_title %}{% if article.id is null %}Add{% else %}Edit{% endif %}{% endblock toolbar_title %}
 
         {% block toolbar_breadcrumbs %}
             <li class="breadcrumb-item text-muted">
@@ -25,7 +25,7 @@
     {{ form_start(form, {attr: {
         class: "form d-flex flex-column flex-lg-row",
     }}) }}
-    {% do form.post.setRendered %}
+
     <div class="d-flex flex-column gap-7 gap-lg-10 w-100 w-lg-300px mb-7 me-lg-10">
         <div class="card card-flush py-4" data-gallery-target>
             <div class="card-header">
@@ -33,44 +33,40 @@
                     <h2>Thumbnail</h2>
                 </div>
                 <div class="card-toolbar">
-
-                    <a
-                            href="javascript:void(0)"
-                            class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
-                            data-amzs-gallery-modal
-                            data-bs-toggle="tooltip"
-                            title="Open Gallery"
-                    >
+                    <a href="javascript:void(0)"
+                       class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
+                       data-amzs-gallery-modal
+                       data-bs-toggle="tooltip"
+                       title="Open Gallery">
                         <i class="ki-duotone ki-pencil fs-7">
                             <span class="path1"></span>
                             <span class="path2"></span>
                         </i>
                     </a>
-
                 </div>
             </div>
             <div class="card-body text-center pt-0">
-                <div
-                     class="image-input image-input-empty image-input-outline image-input-placeholder mb-3"
-                     style="background-image: url('{{ asset(article is not null and article.post.thumbnail is not null ? article.post.thumbnail : 'themes/media/svg/files/blank-image.svg') }}');">
+                <div class="image-input image-input-empty image-input-outline image-input-placeholder mb-3"
+                     style="background-image: url('{{ asset(article.id is not null and article.thumbnail is not null ? article.thumbnail : 'themes/media/svg/files/blank-image.svg') }}');">
                     <div class="image-input-wrapper"></div>
-                    {{ form_widget(form.post.thumbnail, {attr: {hidden: true}}) }}
+                    {{ form_widget(form.thumbnail, {attr: {hidden: true}}) }}
                     <span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="cancel" data-bs-toggle="tooltip" title="Cancel">
-                            <i class="ki-duotone ki-cross fs-2">
-                                <span class="path1"></span>
-                                <span class="path2"></span>
-                            </i>
-                        </span>
+                        <i class="ki-duotone ki-cross fs-2">
+                            <span class="path1"></span>
+                            <span class="path2"></span>
+                        </i>
+                    </span>
                     <span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="remove" data-bs-toggle="tooltip" title="Remove">
-                            <i class="ki-duotone ki-cross fs-2">
-                                <span class="path1"></span>
-                                <span class="path2"></span>
-                            </i>
-                        </span>
+                        <i class="ki-duotone ki-cross fs-2">
+                            <span class="path1"></span>
+                            <span class="path2"></span>
+                        </i>
+                    </span>
                 </div>
                 <div class="text-muted fs-7">Set the product thumbnail image. Only *.png, *.jpg and *.jpeg image files are accepted</div>
             </div>
         </div>
+
         <div class="card card-flush py-4">
             <div class="card-header">
                 <div class="card-title">
@@ -81,10 +77,11 @@
                 </div>
             </div>
             <div class="card-body pt-0">
-                {{ form_widget(form.post.published, {attr: {'class': 'form-select fs-7', 'data-controller':'select2', 'data-Admin--article-add-target': 'status'}}) }}
+                {{ form_widget(form.published, {attr: {'class': 'form-select fs-7', 'data-controller':'select2', 'data-Admin--article-add-target': 'status'}}) }}
                 <div class="text-muted fs-7">Set the product status.</div>
             </div>
         </div>
+
         <div class="card card-flush py-4">
             <div class="card-header">
                 <div class="card-title">
@@ -93,26 +90,25 @@
             </div>
 
             <div class="card-body pt-0">
-                {% if form.post.category is defined %}
+                {% if form.category is defined %}
                     <div class="mb-10">
                         <label class="form-label d-block">Category</label>
-                        {{ form_widget(form.post.category) }}
+                        {{ form_widget(form.category) }}
                         <div class="text-muted fs-7">Select category for this article.</div>
                     </div>
                 {% endif %}
                 <div class="mb-10">
                     <label class="form-label d-block">Topics</label>
-                    {{ form_widget(form.post.topics) }}
-                    <div class="text-muted fs-7">
-                        Select topics for this article.
-                    </div>
+                    {{ form_widget(form.topics) }}
+                    <div class="text-muted fs-7">Select topics for this article.</div>
                 </div>
                 <label class="form-label d-block">Tags</label>
-                {{ form_widget(form.post.arrTags, {attr: {class: 'js-tagify'}}) }}
+                {{ form_widget(form.arrTags, {attr: {class: 'js-tagify'}}) }}
                 <div class="text-muted fs-7">Add tags to a page.</div>
             </div>
         </div>
-        {% if article is not null %}
+
+        {% if article.id is not null %}
             <div class="card card-flush py-4">
                 <div class="card-header">
                     <div class="card-title">
@@ -121,14 +117,20 @@
                 </div>
                 <div class="card-body pt-0">
                     {{ macros.toggle('Keep slug', 'keep_slug', true, 'keep-slug' ) }}
+
+                    {{ form_widget(form.isHot) }}
+                    {{ form_widget(form.isNew) }}
+
                     <div class="mb-2"></div>
-                    {{ macros.toggle('Hot', form.post.isHot.vars.full_name , article.post.isHot == 2, form.post.isHot.vars.id ) }}
+                    {{ macros.toggle('Hot', form.isHot.vars.full_name , article.isHot == 2, form.isHot.vars.id ) }}
+
                     <div class="mb-2"></div>
-                    {{ macros.toggle('Lasted New', form.post.isNew.vars.full_name , article.post.isNew == 2, form.post.isNew.vars.id ) }}
+                    {{ macros.toggle('Lasted New', form.isNew.vars.full_name , article.isNew == 2, form.isNew.vars.id ) }}
                 </div>
             </div>
         {% endif %}
     </div>
+
     <div class="d-flex flex-column flex-row-fluid gap-7 gap-lg-10">
 
         {% if locales is defined and locales|length > 1 %}
@@ -148,7 +150,7 @@
             <li class="nav-item">
                 <a class="nav-link text-active-primary pb-4 active" data-bs-toggle="tab" href="#amz_article_general">General</a>
             </li>
-            {% if article is not null %}
+            {% if article.id is not null %}
                 <li class="nav-item">
                     <a class="nav-link text-active-primary pb-4" data-bs-toggle="tab" href="#amz_article_content">Content</a>
                 </li>
@@ -157,6 +159,7 @@
                 </li>
             {% endif %}
         </ul>
+
         <div class="tab-content">
             <div class="tab-pane fade show active" id="amz_article_general" role="tab-panel">
                 <div class="d-flex flex-column gap-7 gap-lg-10">
@@ -176,19 +179,15 @@
                                             Article Name
                                             {% if locales|length > 1 %}<span class="badge badge-light-primary ms-1">{{ locale|upper }}</span>{% endif %}
                                         </label>
-                                        {{ form_widget(form.post['title_' ~ locale], {attr: {class: 'form-control mb-2'}}) }}
+                                        {{ form_widget(form['title_' ~ locale], {attr: {class: 'form-control mb-2'}}) }}
                                         <div class="text-muted fs-7">A page name is required and recommended to be unique.</div>
                                     </div>
-{#                                    <div class="mb-10 fv-row">#}
-{#                                        <label class="required form-label">Language</label>#}
-{#                                        #}{#                                        {{ form_widget(form.language, {attr: {class: "form-control mb-2",'data-Admin--article-add-target': 'language'}}) }}#}
-{#                                    </div>#}
                                     <div>
                                         <label class="form-label">
                                             Description
                                             {% if locales|length > 1 %}<span class="badge badge-light-primary ms-1">{{ locale|upper }}</span>{% endif %}
                                         </label>
-                                        {{ form_widget(form.post['description_' ~ locale], {attr: {class: 'mb-2 form-control', rows: 5}}) }}
+                                        {{ form_widget(form['description_' ~ locale], {attr: {class: 'mb-2 form-control', rows: 5}}) }}
                                         <div class="text-muted fs-7">Set a description to the Page for better visibility.</div>
                                     </div>
                                 </div>
@@ -199,15 +198,17 @@
                     {{ include('@AmzsArticle/article/social_sharing.html.twig') }}
                 </div>
             </div>
-            {% if article is not null %}
+
+            {% if article.id is not null %}
                 <div class="tab-pane fade" id="amz_article_content" role="tab-panel">
                     {% for locale in locales %}
                         <div class="locale-fields" data-locale="{{ locale }}"
                              {% if not loop.first %}style="display:none"{% endif %}>
-                            {{ form_widget(form.post['content_' ~ locale]) }}
+                            {{ form_widget(form['content_' ~ locale]) }}
                         </div>
                     {% endfor %}
                 </div>
+
                 <div class="tab-pane fade" id="amz_article_advanced" role="tab-panel">
                     <div class="d-flex flex-column gap-7 gap-lg-10">
                         <div class="card card-flush py-4">
@@ -230,18 +231,17 @@
                 </div>
             {% endif %}
         </div>
+
         <div class="d-flex justify-content-end">
             <a href="{{ path(constant('AmzsCMS\\ArticleBundle\\Constant\\ArticleRoute::ROUTE_INDEX')) }}" class="btn btn-light me-5">Cancel</a>
-            <button
-                    type="button"
+            <button type="button"
                     class="btn btn-primary"
                     id="bnt-submit"
-                    data-route="{% if article is null %}
-        {{ path(constant('AmzsCMS\\ArticleBundle\\Constant\\ArticleRoute::ROUTE_ADD')) }}
-    {% else %}
-        {{ path(constant('AmzsCMS\\ArticleBundle\\Constant\\ArticleRoute::ROUTE_EDIT'), {id: article.id}) }}
-    {% endif %}"
-            >
+                    data-route="{% if article.id is null %}
+                        {{ path(constant('AmzsCMS\\ArticleBundle\\Constant\\ArticleRoute::ROUTE_ADD')) }}
+                    {% else %}
+                        {{ path(constant('AmzsCMS\\ArticleBundle\\Constant\\ArticleRoute::ROUTE_EDIT'), {id: article.id}) }}
+                    {% endif %}">
                 <span class="indicator-label">Save Changes</span>
                 <span class="indicator-progress">Please wait...
                    <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
@@ -257,15 +257,12 @@
 
     <script>
         $(function () {
-
             $('.js-select2-topics').select2({
                 placeholder: '-- Chọn chủ đề --',
                 allowClear: true,
                 width: '250',
                 closeOnSelect: false,
-
             });
-
         });
     </script>
     <script src="{{ asset(get_path_article_cms_asset() ~ 'assets/js/article.js') }}"></script>

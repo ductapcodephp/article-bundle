@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace AmzsCMS\ArticleBundle\Form\Common;
 
-use AmzsCMS\ArticleBundle\DataType\ArticleStatusType;
+use AmzsCMS\ArticleBundle\DataType\PostStatusType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\OptionsResolver\Options;
@@ -21,8 +21,8 @@ class PublishedChoiceType extends AbstractType
     {
         $resolver->setDefaults([
             'choices' => [
-                'Published' => ArticleStatusType::PUBLISH_TYPE_PUBLISHED,
-                'Draft' =>  ArticleStatusType::PUBLISH_TYPE_DRAFT,
+                'Published' => PostStatusType::PUBLISH_TYPE_PUBLISHED,
+                'Draft' =>  PostStatusType::PUBLISH_TYPE_DRAFT,
             ],
             'attr' => [
                 'data-controller' => 'select2',
