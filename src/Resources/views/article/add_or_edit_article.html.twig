@@ -1,10 +1,9 @@
 {% extends '@AmzsCore/base.html.twig' %}
-{% block title %}CMS- {% if article.id is null %}Add{% else %}Edit{% endif %} News Article{% endblock %}
+{% block title %}CMS- {% if article is null %}Add{% else %}Edit{% endif %} News Article{% endblock %}
 
 {% block toolbar %}
     {% embed '@AmzsCore/Layout/_toolbar.html.twig' %}
-        {% block toolbar_title %}{% if article.id is null %}Add{% else %}Edit{% endif %}{% endblock toolbar_title %}
-
+        {% block toolbar_title %}{% if article is null %}Add{% else %}Edit{% endif %}{% endblock toolbar_title %}
         {% block toolbar_breadcrumbs %}
             <li class="breadcrumb-item text-muted">
                 <a href="{{ path(constant('AmzsCMS\\ArticleBundle\\Constant\\ArticleRoute::ROUTE_INDEX')) }}" >
@@ -47,7 +46,7 @@
             </div>
             <div class="card-body text-center pt-0">
                 <div class="image-input image-input-empty image-input-outline image-input-placeholder mb-3"
-                     style="background-image: url('{{ asset(article.id is not null and article.thumbnail is not null ? article.thumbnail : 'themes/media/svg/files/blank-image.svg') }}');">
+                     style="    background-image: url('{{ asset(article is not null and article.thumbnail is not null ? article.thumbnail : 'themes/media/svg/files/blank-image.svg') }}');">
                     <div class="image-input-wrapper"></div>
                     {{ form_widget(form.thumbnail, {attr: {hidden: true}}) }}
                     <span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="cancel" data-bs-toggle="tooltip" title="Cancel">
@@ -108,7 +107,7 @@
             </div>
         </div>
 
-        {% if article.id is not null %}
+        {% if article is not null %}
             <div class="card card-flush py-4">
                 <div class="card-header">
                     <div class="card-title">
@@ -150,14 +149,12 @@
             <li class="nav-item">
                 <a class="nav-link text-active-primary pb-4 active" data-bs-toggle="tab" href="#amz_article_general">General</a>
             </li>
-            {% if article.id is not null %}
-                <li class="nav-item">
-                    <a class="nav-link text-active-primary pb-4" data-bs-toggle="tab" href="#amz_article_content">Content</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-active-primary pb-4" data-bs-toggle="tab" href="#amz_article_advanced">Advanced</a>
-                </li>
-            {% endif %}
+            <li class="nav-item">
+                <a class="nav-link text-active-primary pb-4" data-bs-toggle="tab" href="#amz_article_content">Content</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-active-primary pb-4" data-bs-toggle="tab" href="#amz_article_advanced">Advanced</a>
+            </li>
         </ul>
 
         <div class="tab-content">
@@ -172,8 +169,9 @@
                         <div class="card-body pt-0">
 
                             {% for locale in locales %}
-                                <div class="locale-fields" data-locale="{{ locale }}"
+                                <div class="locale-fields w-100" data-locale="{{ locale }}"
                                      {% if not loop.first %}style="display:none"{% endif %}>
+
                                     <div class="mb-10 fv-row">
                                         <label class="required form-label">
                                             Article Name
@@ -182,7 +180,8 @@
                                         {{ form_widget(form['title_' ~ locale], {attr: {class: 'form-control mb-2'}}) }}
                                         <div class="text-muted fs-7">A page name is required and recommended to be unique.</div>
                                     </div>
-                                    <div>
+
+                                    <div class="fv-row">
                                         <label class="form-label">
                                             Description
                                             {% if locales|length > 1 %}<span class="badge badge-light-primary ms-1">{{ locale|upper }}</span>{% endif %}
@@ -190,6 +189,7 @@
                                         {{ form_widget(form['description_' ~ locale], {attr: {class: 'mb-2 form-control', rows: 5}}) }}
                                         <div class="text-muted fs-7">Set a description to the Page for better visibility.</div>
                                     </div>
+
                                 </div>
                             {% endfor %}
 
@@ -199,37 +199,35 @@
                 </div>
             </div>
 
-            {% if article.id is not null %}
-                <div class="tab-pane fade" id="amz_article_content" role="tab-panel">
-                    {% for locale in locales %}
-                        <div class="locale-fields" data-locale="{{ locale }}"
-                             {% if not loop.first %}style="display:none"{% endif %}>
-                            {{ form_widget(form['content_' ~ locale]) }}
-                        </div>
-                    {% endfor %}
-                </div>
+            <div class="tab-pane fade" id="amz_article_content" role="tab-panel">
+                {% for locale in locales %}
+                    <div class="locale-fields w-100" data-locale="{{ locale }}"
+                         {% if not loop.first %}style="display:none"{% endif %}>
+                        {{ form_widget(form['content_' ~ locale]) }}
+                    </div>
+                {% endfor %}
+            </div>
 
-                <div class="tab-pane fade" id="amz_article_advanced" role="tab-panel">
-                    <div class="d-flex flex-column gap-7 gap-lg-10">
-                        <div class="card card-flush py-4">
-                            <div class="card-header">
-                                <div class="card-title">
-                                    <h2>Gallery</h2>
-                                </div>
+            <div class="tab-pane fade" id="amz_article_advanced" role="tab-panel">
+                <div class="d-flex flex-column gap-7 gap-lg-10">
+                    <div class="card card-flush py-4">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <h2>Gallery</h2>
                             </div>
-                            <div class="card-body pt-0">
-                                <div class="mb-10 fv-row">
-                                    <label class="form-label">CSS</label>
-                                    <div class="text-muted fs-7">Enter the css.</div>
-                                </div>
-                                <div class="mb-10 fv-row">
-                                    <label class="form-label">Custom CSS</label>
-                                </div>
+                        </div>
+                        <div class="card-body pt-0">
+                            <div class="mb-10 fv-row">
+                                <label class="form-label">CSS</label>
+                                <div class="text-muted fs-7">Enter the css.</div>
+                            </div>
+                            <div class="mb-10 fv-row">
+                                <label class="form-label">Custom CSS</label>
                             </div>
                         </div>
                     </div>
                 </div>
-            {% endif %}
+            </div>
         </div>
 
         <div class="d-flex justify-content-end">
@@ -237,7 +235,7 @@
             <button type="button"
                     class="btn btn-primary"
                     id="bnt-submit"
-                    data-route="{% if article.id is null %}
+                    data-route="{% if article is null %}
                         {{ path(constant('AmzsCMS\\ArticleBundle\\Constant\\ArticleRoute::ROUTE_ADD')) }}
                     {% else %}
                         {{ path(constant('AmzsCMS\\ArticleBundle\\Constant\\ArticleRoute::ROUTE_EDIT'), {id: article.id}) }}
